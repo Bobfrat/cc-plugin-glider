@@ -5,9 +5,10 @@ cc_plugin_glider/util.py
 '''
 from pkg_resources import resource_filename
 import csv
-
+import pandas as pd
 
 _SEA_NAMES = None
+_REQUIRED_VARS = None
 
 
 def get_sea_names():
@@ -25,3 +26,16 @@ def get_sea_names():
                 buf[sea_name] = code
         _SEA_NAMES = buf
     return _SEA_NAMES
+
+
+def get_required_vars():
+    '''
+    Returns a dict containing the required vars and their expected standard name and units
+    '''
+    global _REQUIRED_VARS
+    if _REQUIRED_VARS is None:
+        df = pd.read_csv(resource_filename('cc_plugin_glider', 'data/vars.csv'),
+                         index_col=0,
+                         keep_default_na=False)
+        _REQUIRED_VARS = df.to_dict(orient='index')
+    return _REQUIRED_VARS
